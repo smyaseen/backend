@@ -1,0 +1,37 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+commit_message="$(cat "$1")"
+
+pattern='^(build|fix|chore|feat|docs|refactor|perf|test): .+$'
+
+if [[ ! $commit_message =~ $pattern ]]; then
+    echo "\nInvalid commit message: $commit_message"
+    echo "-"
+    echo "Should follow this pattern: build|fix|chore|feat|docs|refactor|perf|test: objective"
+    echo "-"
+    echo "example: chore: updated .gitignore"
+    echo "-"
+    echo "Refer to this for convention:"
+    echo "-"
+    echo "build : Changes related to building the code (e.g. adding npm dependencies or external libraries)."
+    echo "-"
+    echo "chore: Changes that do not affect the external user (e.g. updating the .gitignore file or .prettierrc file)."
+    echo "-"
+    echo "feat: A new feature."
+    echo "-"
+    echo "fix: A bug fix."
+    echo "-"
+    echo "docs: Documentation a related changes."
+    echo "-"
+    echo "refactor: A code that neither fix bug nor adds a feature."
+    echo "-"
+    echo "perf: A code that improves performance style: A code that is related to styling."
+    echo "-"
+    echo "test: Adding new test or making changes to existing test"
+    echo "-\n"
+  exit 1
+fi
+
+npx lint-staged
+npm run coverage
