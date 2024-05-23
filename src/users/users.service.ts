@@ -45,15 +45,17 @@ export class UsersService {
       },
     });
 
-    const tokens = await this.getTokens(newUser.id, newUser.name);
+    const tokens = await this.getTokens(newUser.id, {
+      username: newUser.name,
+      role: newUser.role,
+    });
     await this.updateRefreshToken(newUser.id, tokens.refreshToken);
-    return { tokens, user: { name: newUser.name } };
+    return { tokens, user: { name: newUser.name, role: newUser.role } };
   }
 
   async updateRefreshToken(userId: string, refreshToken: string) {
-    const hashedRefreshToken = await hash(refreshToken, 10);
     await this.update(userId, {
-      refreshToken: hashedRefreshToken,
+      refreshToken,
     });
   }
 
@@ -69,7 +71,7 @@ export class UsersService {
       accessToken: string;
       refreshToken: string;
     };
-    user: { name: string };
+    user: { name: string; role: string };
   }> {
     const user = await this.prisma.user.findFirst({
       where: { email },
@@ -85,10 +87,13 @@ export class UsersService {
       throw new HttpException('invalid_credentials', HttpStatus.UNAUTHORIZED);
     }
 
-    const tokens = await this.getTokens(user.id, user.name);
+    const tokens = await this.getTokens(user.id, {
+      username: user.name,
+      role: user.role,
+    });
     await this.updateRefreshToken(user.id, tokens.refreshToken);
 
-    return { tokens, user: { name: user.name } };
+    return { tokens, user: { name: user.name, role: user.role } };
   }
 
   async findByPayload({ email }: any): Promise<any> {
@@ -97,26 +102,31 @@ export class UsersService {
     });
   }
 
-  async getTokens(userId: string, username: string) {
+  async getTokens(
+    userId: string,
+    { username, role }: { username: string; role: string },
+  ) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {
           sub: userId,
           username,
+          role,
         },
         {
           secret: this.configService.getJWT_ACCESS_SECRET(),
-          expiresIn: '15m',
+          expiresIn: '10m',
         },
       ),
       this.jwtService.signAsync(
         {
           sub: userId,
           username,
+          role,
         },
         {
           secret: this.configService.getJWT_REFRESH_SECRET(),
-          expiresIn: '7d',
+          expiresIn: '20m',
         },
       ),
     ]);
@@ -125,5 +135,24 @@ export class UsersService {
       accessToken,
       refreshToken,
     };
+  }
+
+  async refresh(refreshToken: string) {
+    const user = await this.prisma.user.findFirst({
+      where: { refreshToken },
+    });
+
+    if (!user) {
+      throw new HttpException('invalid_credentials', HttpStatus.UNAUTHORIZED);
+    }
+
+    const tokens = await this.getTokens(user.id, {
+      username: user.name,
+      role: user.role,
+    });
+
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
+
+    return { tokens, user: { name: user.name, role: user.role } };
   }
 }

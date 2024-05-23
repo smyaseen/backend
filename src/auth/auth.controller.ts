@@ -30,4 +30,9 @@ export class AuthController {
   public async login(@Body() loginUserDto: LoginUserDto): Promise<any> {
     return await this.authService.login(loginUserDto);
   }
+
+  @Post('refresh')
+  public async refresh(@Body() token: { refreshToken: string }): Promise<any> {
+    return await this.authService.refresh(token.refreshToken);
+  }
 }

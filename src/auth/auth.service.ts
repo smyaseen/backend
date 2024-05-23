@@ -1,7 +1,6 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { CreateUserDto, LoginUserDto } from '../users/user.dto';
-import { JwtPayload } from './jwt.strategy';
 import { User } from '@prisma/client';
 
 @Injectable()
@@ -33,12 +32,11 @@ export class AuthService {
     };
   }
 
-  async validateUser(payload: JwtPayload): Promise<any> {
-    const user = await this.usersService.findByPayload(payload);
-    if (!user) {
-      throw new HttpException('INVALID_TOKEN', HttpStatus.UNAUTHORIZED);
-    }
-    return user;
+  async refresh(refreshToken: string): Promise<any> {
+    const user = await this.usersService.refresh(refreshToken);
+    return {
+      data: user,
+    };
   }
 }
 
