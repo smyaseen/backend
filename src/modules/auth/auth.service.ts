@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { CreateUserDto, LoginUserDto } from 'dtos/user.dto';
 import { RegistrationStatus } from './interfaces/auth.interface';
@@ -15,13 +15,19 @@ export class AuthService {
     };
 
     try {
+      Logger.log('Creating user');
       status.data = await this.usersService.create(userDto);
     } catch (err) {
       status = {
         success: false,
         message: err,
       };
+
+      Logger.log(`Error creating user ${JSON.stringify(err)}`);
     }
+
+    Logger.log(`User created ${JSON.stringify(status)}`);
+
     return status;
   }
 

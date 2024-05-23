@@ -12,4 +12,12 @@ export class EnvironmentConfigService {
   getJWT_REFRESH_SECRET(): string {
     return this.configService.get<string>('JWT_REFRESH_SECRET');
   }
+
+  getAppLogs(): boolean {
+    return this.configService.get<boolean>('APP_LOGS');
+  }
+
+  getLogLevel(): string {
+    return this.configService.get<string>('LOG_LEVEL');
+  }
 }
