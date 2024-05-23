@@ -5,9 +5,11 @@ import {
   HttpStatus,
   Post,
 } from '@nestjs/common';
-import { AuthService, RegistrationStatus } from './auth.service';
-import { CreateUserDto, LoginUserDto } from '../users/user.dto';
+import { AuthService } from './auth.service';
 import { ApiTags } from '@nestjs/swagger';
+import { CreateUserDto, LoginUserDto, RefreshTokenDto } from 'dtos/user.dto';
+import { RegistrationStatus } from './interfaces/auth.interface';
+import { IUserAuthResponse } from 'interfaces/user.interface';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -27,12 +29,16 @@ export class AuthController {
   }
 
   @Post('login')
-  public async login(@Body() loginUserDto: LoginUserDto): Promise<any> {
+  public async login(
+    @Body() loginUserDto: LoginUserDto,
+  ): Promise<IUserAuthResponse> {
     return await this.authService.login(loginUserDto);
   }
 
   @Post('refresh')
-  public async refresh(@Body() token: { refreshToken: string }): Promise<any> {
+  public async refresh(
+    @Body() token: RefreshTokenDto,
+  ): Promise<IUserAuthResponse> {
     return await this.authService.refresh(token.refreshToken);
   }
 }

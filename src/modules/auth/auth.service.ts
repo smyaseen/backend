@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { CreateUserDto, LoginUserDto } from '../users/user.dto';
-import { User } from '@prisma/client';
+import { CreateUserDto, LoginUserDto } from 'dtos/user.dto';
+import { RegistrationStatus } from './interfaces/auth.interface';
+import { IUserAuthResponse } from 'interfaces/user.interface';
 
 @Injectable()
 export class AuthService {
@@ -24,29 +25,14 @@ export class AuthService {
     return status;
   }
 
-  async login(loginUserDto: LoginUserDto): Promise<any> {
+  async login(loginUserDto: LoginUserDto): Promise<IUserAuthResponse> {
     const user = await this.usersService.findByLogin(loginUserDto);
 
-    return {
-      data: user,
-    };
+    return user;
   }
 
-  async refresh(refreshToken: string): Promise<any> {
+  async refresh(refreshToken: string): Promise<IUserAuthResponse> {
     const user = await this.usersService.refresh(refreshToken);
-    return {
-      data: user,
-    };
+    return user;
   }
-}
-
-export interface RegistrationStatus {
-  success: boolean;
-  message: string;
-  data?: User;
-}
-export interface RegistrationSeederStatus {
-  success: boolean;
-  message: string;
-  data?: User[];
 }

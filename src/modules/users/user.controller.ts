@@ -10,8 +10,8 @@ import {
 import { ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { UpdatePasswordDto } from './user.dto';
+import { JwtAuthGuard } from '../auth/jwt/jwt-auth.guard';
+import { UpdatePasswordDto } from './dto/user.dto';
 
 @ApiTags('user')
 @Controller('user')

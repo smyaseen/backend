@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
-import { PrismaService } from '../prisma.service';
+import { UsersService } from '../users.service';
 import { JwtService } from '@nestjs/jwt';
-import { EnvironmentConfigService } from '../config/environment-config/environment-config.service';
+import { PrismaService } from '../../../prisma.service';
+import { EnvironmentConfigService } from '../../../config/environment-config/environment-config.service';
 
 describe('UsersService', () => {
   let service: UsersService;

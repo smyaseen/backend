@@ -4,9 +4,9 @@ import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { UsersService } from '../users/users.service';
-import { PrismaService } from '../prisma.service';
-import { AccessTokenStrategy } from './accessToken.strategy';
-import { RefreshTokenStrategy } from './refreshToken.strategy';
+import { AccessTokenStrategy } from './jwt/accessToken.strategy';
+import { RefreshTokenStrategy } from './jwt/refreshToken.strategy';
+import { PrismaService } from '../../prisma.service';
 
 @Module({
   imports: [UsersModule, JwtModule.register({})],

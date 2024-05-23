@@ -1,10 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateUserDto, LoginUserDto, UpdatePasswordDto } from './user.dto';
+import { UpdatePasswordDto } from './dto/user.dto';
 import { compare, hash } from 'bcrypt';
-import { PrismaService } from '../prisma.service';
-import { User } from '@prisma/client';
+import { PrismaService } from '../../prisma.service';
+import { Prisma, Role, User } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
-import { EnvironmentConfigService } from '../config/environment-config/environment-config.service';
+import { EnvironmentConfigService } from '../../config/environment-config/environment-config.service';
+import { CreateUserDto, LoginUserDto } from 'dtos/user.dto';
+import { IUserAuthResponse } from 'interfaces/user.interface';
 
 @Injectable()
 export class UsersService {
@@ -30,7 +32,8 @@ export class UsersService {
       data: { password: await hash(payload.new_password, 10) },
     });
   }
-  async create(userDto: CreateUserDto): Promise<any> {
+
+  async create(userDto: CreateUserDto): Promise<IUserAuthResponse> {
     const userInDb = await this.prisma.user.findFirst({
       where: { email: userDto.email },
     });
@@ -40,7 +43,7 @@ export class UsersService {
     const newUser = await this.prisma.user.create({
       data: {
         ...userDto,
-        role: 'customer' as const,
+        role: Role.customer,
         password: await hash(userDto.password, 10),
       },
     });
@@ -59,20 +62,17 @@ export class UsersService {
     });
   }
 
-  async update(id: string, data: any) {
+  async update(id: string, data: Prisma.UserUpdateInput): Promise<User> {
     return await this.prisma.user.update({
       where: { id },
       data,
     });
   }
 
-  async findByLogin({ email, password }: LoginUserDto): Promise<{
-    tokens: {
-      accessToken: string;
-      refreshToken: string;
-    };
-    user: { name: string; role: string };
-  }> {
+  async findByLogin({
+    email,
+    password,
+  }: LoginUserDto): Promise<IUserAuthResponse> {
     const user = await this.prisma.user.findFirst({
       where: { email },
     });
@@ -96,9 +96,9 @@ export class UsersService {
     return { tokens, user: { name: user.name, role: user.role } };
   }
 
-  async findByPayload({ email }: any): Promise<any> {
+  async findByPayload(findByData: Prisma.UserWhereInput): Promise<any> {
     return await this.prisma.user.findFirst({
-      where: { email },
+      where: findByData,
     });
   }
 
@@ -137,7 +137,7 @@ export class UsersService {
     };
   }
 
-  async refresh(refreshToken: string) {
+  async refresh(refreshToken: string): Promise<IUserAuthResponse> {
     const user = await this.prisma.user.findFirst({
       where: { refreshToken },
     });
