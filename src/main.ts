@@ -11,6 +11,8 @@ import { LogLevel, Logger } from '@nestjs/common';
 config();
 const configService = new EnvironmentConfigService(new ConfigService());
 
+const port = process.env.PORT || 3000;
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -43,6 +45,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(3000);
+  await app.listen(port, '0.0.0.0');
 }
 bootstrap();
