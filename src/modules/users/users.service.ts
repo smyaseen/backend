@@ -27,7 +27,7 @@ export class UsersService {
       throw new HttpException('invalid_credentials', HttpStatus.UNAUTHORIZED);
     }
 
-    Logger.log(`User found: ${user}`);
+    Logger.log(`User found: ${JSON.stringify(user)}`);
 
     const areEqual = await compare(payload.old_password, user.password);
 
@@ -100,11 +100,21 @@ export class UsersService {
   }: LoginUserDto): Promise<IUserAuthResponse> {
     Logger.log(`Finding user: ${email}`);
 
-    const user = await this.prisma.user.findFirst({
-      where: { email },
-    });
+    let user: User;
+    try {
+      user = await this.prisma.user.findFirst({
+        where: { email },
+      });
+    } catch (error) {
+      Logger.error(`Error finding user: ${error}`);
 
-    Logger.log(`user found: ${user}`);
+      throw new HttpException(
+        'invalid_credentials',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    Logger.log(`user found: ${JSON.stringify(user)}`);
 
     if (!user) {
       throw new HttpException('invalid_credentials', HttpStatus.UNAUTHORIZED);
@@ -183,7 +193,7 @@ export class UsersService {
       throw new HttpException('invalid_credentials', HttpStatus.UNAUTHORIZED);
     }
 
-    Logger.log(`User found: ${user}`);
+    Logger.log(`User found: ${JSON.stringify(user)}`);
 
     const tokens = await this.getTokens(user.id, {
       username: user.name,

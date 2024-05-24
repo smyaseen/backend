@@ -7,6 +7,7 @@ import { config } from 'dotenv';
 import { EnvironmentConfigService } from './config/environment-config/environment-config.service';
 import { ConfigService } from '@nestjs/config';
 import { LogLevel, Logger } from '@nestjs/common';
+import helmet from 'helmet';
 
 config();
 const configService = new EnvironmentConfigService(new ConfigService());
@@ -14,9 +15,21 @@ const configService = new EnvironmentConfigService(new ConfigService());
 const port = process.env.PORT || 3000;
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    cors: true,
+  });
 
-  app.enableCors();
+  app.enableCors({
+    origin: [configService.getCorsOrigin()],
+    methods: ['GET', 'POST', 'PUT'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'access-control-allow-origin',
+    ],
+  });
+
+  app.use(helmet());
 
   app.useGlobalInterceptors(
     new ResponseInterceptor(),

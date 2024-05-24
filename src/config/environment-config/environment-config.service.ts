@@ -20,4 +20,8 @@ export class EnvironmentConfigService {
   getLogLevel(): string {
     return this.configService.get<string>('LOG_LEVEL');
   }
+
+  getCorsOrigin(): string {
+    return this.configService.get<string>('CORS_ORIGIN');
+  }
 }
