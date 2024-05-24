@@ -17,7 +17,7 @@ A NestJS App with Login, Signup feature, with latest technology, tools, and best
 - **[Prisma ORM]** - using Prisma for efficient database handling
 - **[MongoDB]** - using MongoDB for user database
 - **[ESlint]** and **[Prettier]** - For clean, consistent, and error-free code
-- **[Jest]** and **[React Testing Library]** - For rock-solid unit tests
+- **[Jest]** - For rock-solid unit tests
 - **[Husky]** - For Git Hooks, having auto commit check, lint-staged, and running tests on commit.
 - **[Lint-Staged]** - For linting and prettier
 - **[Import Resolver]** - For auto import resolve on save
