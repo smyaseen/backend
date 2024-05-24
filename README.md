@@ -11,6 +11,9 @@ A NestJS App with Login, Signup feature, with latest technology, tools, and best
 
 - **[Throttling]** -  to protect app from brute-force attacks
 
+- **[Response Interceptors]** - Interceptors for response handling
+- **[Env Config]** - Env Config Service for easy and env access & env variables validation with Joi
+- **[Logging]** - Added Logger Module to print Logs
 - **[Prisma ORM]** - using Prisma for efficient database handling
 - **[MongoDB]** - using MongoDB for user database
 - **[ESlint]** and **[Prettier]** - For clean, consistent, and error-free code
