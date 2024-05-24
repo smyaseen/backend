@@ -1,34 +1,21 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { CreateUserDto, LoginUserDto } from 'dtos/user.dto';
-import { RegistrationStatus } from './interfaces/auth.interface';
 import { IUserAuthResponse } from 'interfaces/user.interface';
 
 @Injectable()
 export class AuthService {
   constructor(private readonly usersService: UsersService) {}
 
-  async register(userDto: CreateUserDto): Promise<RegistrationStatus> {
-    let status: RegistrationStatus = {
-      success: true,
-      message: 'ACCOUNT_CREATE_SUCCESS',
-    };
-
+  async register(userDto: CreateUserDto): Promise<IUserAuthResponse> {
     try {
       Logger.log('Creating user');
-      status.data = await this.usersService.create(userDto);
+
+      return await this.usersService.create(userDto);
     } catch (err) {
-      status = {
-        success: false,
-        message: err,
-      };
-
       Logger.log(`Error creating user ${JSON.stringify(err)}`);
+      throw new HttpException('Error creating user', HttpStatus.BAD_REQUEST);
     }
-
-    Logger.log(`User created ${JSON.stringify(status)}`);
-
-    return status;
   }
 
   async login(loginUserDto: LoginUserDto): Promise<IUserAuthResponse> {

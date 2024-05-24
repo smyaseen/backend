@@ -1,14 +1,7 @@
-import {
-  Body,
-  Controller,
-  HttpException,
-  HttpStatus,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateUserDto, LoginUserDto, RefreshTokenDto } from 'dtos/user.dto';
-import { RegistrationStatus } from './interfaces/auth.interface';
 import { IUserAuthResponse } from 'interfaces/user.interface';
 import { responseMessageMetadata } from 'decorators/response-message.decorator';
 import { APP_MESSAGES } from 'utils/constants';
@@ -22,12 +15,10 @@ export class AuthController {
   @responseMessageMetadata(APP_MESSAGES.USER.SUCCESS_PROFILE_CREATED)
   public async register(
     @Body() createUserDto: CreateUserDto,
-  ): Promise<RegistrationStatus> {
-    const result: RegistrationStatus =
+  ): Promise<IUserAuthResponse> {
+    const result: IUserAuthResponse =
       await this.authService.register(createUserDto);
-    if (!result.success) {
-      throw new HttpException(result.message, HttpStatus.BAD_REQUEST);
-    }
+
     return result;
   }
 
