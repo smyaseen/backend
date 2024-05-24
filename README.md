@@ -9,6 +9,8 @@ A NestJS App with Login, Signup feature, with latest technology, tools, and best
 
 - **[Helmet]** - Helmet can help protect your app from some well-known web vulnerabilities by setting HTTP headers appropriately. Generally, Helmet is just a collection of smaller middleware functions that set security-related HTTP headers
 
+- **[Throttling]** -  to protect app from brute-force attacks
+
 - **[Prisma ORM]** - using Prisma for efficient database handling
 - **[MongoDB]** - using MongoDB for user database
 - **[ESlint]** and **[Prettier]** - For clean, consistent, and error-free code
